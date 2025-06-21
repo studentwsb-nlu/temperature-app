@@ -1,0 +1,8 @@
+# Wyklucz certyfikaty backendu
+backend/certs/
+
+# Wyklucz pliki środowiskowe frontendu
+frontend/.env
+
+# Node modules
+node_modules/
