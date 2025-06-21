@@ -1,0 +1,21 @@
+{
+  "name": "temperature-backend",
+  "version": "1.0.0",
+  "description": "Backend serwer dla aplikacji temperatury",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.0.0",
+    "cors": "^2.8.5",
+    "ws": "^8.14.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
