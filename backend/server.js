@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const WebSocket = require('ws');
 const http = require('http');
+const fs = require('fs');
+const https = require('https');
+const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
@@ -85,6 +88,26 @@ app.post('/api/generate-test-data', async (req, res) => {
   }
 });
 
+// Wczytaj certyfikaty HTTPS
+const privateKey = fs.readFileSync('./certs/server.key', 'utf8');
+const certificate = fs.readFileSync('./certs/server.crt', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
+// Generowanie losowego tokena Bearer
+const TOKEN = crypto.randomBytes(32).toString('hex');
+console.log('\uD83D\uDD11 Twój Bearer token:', TOKEN);
+
+// Middleware do autoryzacji Bearer
+app.use((req, res, next) => {
+  // Pozwól na dostęp do root bez tokena (np. info o API)
+  if (req.path === '/' || req.path === '/favicon.ico') return next();
+  const auth = req.headers['authorization'];
+  if (!auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+});
+
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
@@ -128,9 +151,9 @@ wss.on('connection', async ws => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Serwer działa na porcie ${PORT}`);
-  console.log(`📊 REST API: http://localhost:${PORT}/api/temperatures`);
-  console.log(`🔌 WebSocket: ws://localhost:${PORT}`);
+// Zamiast http.createServer, uruchom serwer HTTPS
+https.createServer(credentials, app).listen(443, () => {
+  console.log('Serwer HTTPS działa na porcie 443');
 });
+
+// Jeśli chcesz, możesz wyłączyć nasłuchiwanie na porcie 5000 (usuń http.createServer lub app.listen)

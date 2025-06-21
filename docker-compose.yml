@@ -17,12 +17,12 @@ services:
     container_name: temp_backend
     restart: always
     ports:
-      - "5000:5000"
+      - "443:443"
     depends_on:
       - mongo
     environment:
       - MONGODB_URI=mongodb://mongo:27017/temperatures
-      - PORT=5000
+      - PORT=443
     volumes:
       - ./backend:/app
       - /app/node_modules

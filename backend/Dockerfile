@@ -13,8 +13,14 @@ RUN npm install
 # Kopiowanie reszty plików aplikacji do kontenera
 COPY . .
 
+# Skopiowanie certyfikatów
+COPY certs/ ./certs/
+
 # Otworzenie portu 5000
 EXPOSE 5000
 
+# Otworzenie portu 443
+EXPOSE 443
+
 # Uruchomienie aplikacji
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

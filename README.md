@@ -2,11 +2,32 @@
 
 Kompletna aplikacja do monitorowania temperatury w czasie rzeczywistym z użyciem Docker, Node.js, React, MongoDB i WebSocket.
 
+## 🆕 Nowości: HTTPS i Bearer Token
+
+Od wersji 1.1 aplikacja obsługuje połączenia HTTPS oraz kontrolę dostępu przez token Bearer:
+- Backend działa przez HTTPS (port 443) z własnym certyfikatem.
+- Każde żądanie do API wymaga nagłówka `Authorization: Bearer <token>`.
+- Token generowany jest automatycznie przy starcie backendu i wyświetlany w logach.
+- Frontend pobiera token z pliku `.env` i automatycznie dołącza go do zapytań.
+
+## ⚡️ Ważne przed uruchomieniem!
+
+**Przed pierwszym uruchomieniem musisz wygenerować certyfikat i klucz dla HTTPS:**
+
+```bash
+mkdir -p backend/certs
+openssl req -x509 -newkey rsa:4096 -keyout backend/certs/server.key -out backend/certs/server.crt -days 365 -nodes -subj "/CN=localhost"
+```
+
+Pliki `server.key` i `server.crt` muszą znajdować się w katalogu `backend/certs/`.
+
+---
+
 ## 📋 Wymagania
 
 - Docker
 - Docker Compose
-- Porty: 3000 (frontend), 5000 (backend), 27017 (MongoDB)
+- Porty: 3000 (frontend), 443 (backend), 27017 (MongoDB)
 
 ## 🚀 Szybkie uruchomienie
 
@@ -20,7 +41,10 @@ temperature-app/
 ├── backend/
 │   ├── server.js
 │   ├── package.json
-│   └── Dockerfile
+│   ├── Dockerfile
+│   └── certs/
+│       ├── server.key
+│       └── server.crt
 └── frontend/
     ├── src/
     │   ├── App.js
@@ -38,6 +62,15 @@ Skopiuj wszystkie pliki z artefaktów do odpowiednich lokalizacji zgodnie ze str
 
 ### 3. Uruchomienie
 
+**Przed uruchomieniem po raz pierwszy wygeneruj certyfikat i klucz dla HTTPS:**
+
+```bash
+mkdir -p backend/certs
+openssl req -x509 -newkey rsa:4096 -keyout backend/certs/server.key -out backend/certs/server.crt -days 365 -nodes -subj "/CN=localhost"
+```
+
+Pliki `server.key` i `server.crt` muszą znajdować się w katalogu `backend/certs/`.
+
 ```bash
 # Przejdź do głównego katalogu
 cd temperature-app
@@ -52,7 +85,7 @@ docker-compose up -d --build
 ### 4. Dostęp do aplikacji
 
 - **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:5000
+- **Backend API:** https://localhost:443
 - **MongoDB:** localhost:27017
 
 ## 🧪 Testowanie

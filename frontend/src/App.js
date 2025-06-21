@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || '/api';
+const TOKEN = process.env.REACT_APP_API_TOKEN;
+
 function App() {
   const [temps, setTemps] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -10,7 +13,11 @@ function App() {
     // Pobierz dane z REST API
     const fetchTemperatures = async () => {
       try {
-        const response = await axios.get('/api/temperatures');
+        const response = await axios.get(`${API_URL}/temperatures`, {
+          headers: {
+            'Authorization': `Bearer ${TOKEN}`
+          }
+        });
         setTemps(response.data);
         
         // Oblicz statystyki
